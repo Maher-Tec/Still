@@ -89,7 +89,7 @@ STILL has no backend, accounts, or cloud sync. `shared_preferences` stores app p
 
 ## 📄 License
 
-No license has been selected for this repository yet. Until a license is added, the source and bundled assets are not granted open-source reuse rights. If you want others to use, modify, and redistribute this project under the MIT License, add a `LICENSE` file containing the MIT License text and your copyright holder and year.
+STILL is released under the [MIT License](LICENSE).
 
 ---
 
