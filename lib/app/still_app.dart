@@ -1,30 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:still/core/app_colors.dart';
 import 'package:still/screens/first_launch_screen.dart';
 import 'package:still/screens/still_screen.dart';
-
-/// The STILL App
-/// A space with no demand. Nothing to do. Nothing to complete. Nothing to end.
 class StillApp extends StatelessWidget {
   final bool isFirstLaunch;
+  final bool soundEnabled;
+  final bool motionEnabled;
+  final bool hapticsEnabled;
+  final int initialMoodIndex;
 
   const StillApp({
     super.key,
     required this.isFirstLaunch,
+    required this.soundEnabled,
+    this.motionEnabled = true,
+    this.hapticsEnabled = false,
+    this.initialMoodIndex = 0,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Set system UI to immersive
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        systemNavigationBarColor: AppColors.backgroundBase,
-      ),
-    );
-
     return MaterialApp(
       title: 'STILL',
       debugShowCheckedModeBanner: false,
@@ -36,7 +31,14 @@ class StillApp extends StatelessWidget {
           primary: AppColors.depthOverlay,
         ),
       ),
-      home: isFirstLaunch ? const FirstLaunchScreen() : const StillScreen(),
+      home: isFirstLaunch
+          ? const FirstLaunchScreen()
+          : StillScreen(
+              soundEnabled: soundEnabled,
+              motionEnabled: motionEnabled,
+              hapticsEnabled: hapticsEnabled,
+              initialMoodIndex: initialMoodIndex,
+            ),
     );
   }
 }

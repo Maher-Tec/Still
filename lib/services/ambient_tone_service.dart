@@ -2,92 +2,93 @@ import 'dart:async';
 import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
-
-/// Ambient Tone Service
-/// 
-/// Low neutral presence tone - barely audible.
-/// Characteristics:
-/// - No melody, no rhythm, no nature, no emotion
-/// - Frequency range: 30-60 Hz base
-/// - Volume: 3-6%
-/// - Fade in: 4-6s
-/// - Fade out: instant on app exit
-/// 
-/// The sound should feel like: the electricity in a quiet room.
-/// If users say "nice sound" → wrong.
-/// If they forget it exists → correct.
 class AmbientToneService {
   static final AmbientToneService _instance = AmbientToneService._internal();
   factory AmbientToneService() => _instance;
   AmbientToneService._internal();
 
   AudioPlayer? _player;
+  AudioPlayer? _startingPlayer;
   Timer? _fadeTimer;
   double _currentVolume = 0.0;
   bool _isPlaying = false;
+  int _generation = 0;
+  static const double _targetVolume = 0.04;
+  static const double _fadeInDuration = 5.0;
+  static const int _fadeSteps = 10;
 
-  // Volume range: 3-6%
-  static const double _targetVolume = 0.04; // 4%
-  static const double _fadeInDuration = 5.0; // 5 seconds
-  static const int _fadeSteps = 50;
+  static const Map<int, String> _moodAssets = {
+    0: 'audio/dusk.mp3',
+    1: 'audio/Midnight.mp3',
+    2: 'audio/Eclipse.mp3',
+    3: 'audio/Emerald.mp3',
+    4: 'audio/Aurora.mp3',
+    5: 'audio/Dawn.mp3',
+  };
 
-  /// Start ambient tone with slow fade in
-  Future<void> start() async {
-    if (_isPlaying) return;
-    
+  String? _currentAsset;
+  Future<void> start({int moodIndex = 0}) async {
+    final asset = _moodAssets[moodIndex] ?? _moodAssets[0]!;
+    if (_isPlaying && _currentAsset == asset) return;
+    await stop();
+    final generation = ++_generation;
+    final player = AudioPlayer();
+    _startingPlayer = player;
+
     try {
-      _player = AudioPlayer();
-      
-      // Set to loop mode
-      await _player!.setReleaseMode(ReleaseMode.loop);
-      
-      // Start at zero volume
-      await _player!.setVolume(0.0);
+      await player.setReleaseMode(ReleaseMode.loop);
+      await player.setVolume(0.0);
       _currentVolume = 0.0;
-      
-      // Play the ambient tone
-      await _player!.play(AssetSource('audio/ambient_tone.mp3'));
+
+      await player.play(AssetSource(asset));
+      if (generation != _generation) {
+        await player.stop();
+        await player.dispose();
+        return;
+      }
+      _player = player;
+      _currentAsset = asset;
+      _startingPlayer = null;
       _isPlaying = true;
-      
-      // Fade in slowly
       _fadeIn();
     } catch (e) {
-      // Silently fail - sound is optional
+      if (identical(_startingPlayer, player)) _startingPlayer = null;
+      await player.dispose();
       debugPrint('Ambient tone unavailable: $e');
     }
   }
 
   void _fadeIn() {
     _fadeTimer?.cancel();
-    
+
     final stepDuration = Duration(
       milliseconds: (_fadeInDuration * 1000 / _fadeSteps).round(),
     );
     final volumeStep = _targetVolume / _fadeSteps;
-    
+
     _fadeTimer = Timer.periodic(stepDuration, (timer) {
       _currentVolume = min(_currentVolume + volumeStep, _targetVolume);
       _player?.setVolume(_currentVolume);
-      
+
       if (_currentVolume >= _targetVolume) {
         timer.cancel();
       }
     });
   }
-
-  /// Stop ambient tone immediately (no fade out)
   Future<void> stop() async {
+    _generation++;
     _fadeTimer?.cancel();
     _isPlaying = false;
-    
-    // Instant stop - the app does not acknowledge departure
+    final startingPlayer = _startingPlayer;
+    _startingPlayer = null;
+    await startingPlayer?.stop();
+    await startingPlayer?.dispose();
     await _player?.stop();
     await _player?.dispose();
     _player = null;
+    _currentAsset = null;
     _currentVolume = 0.0;
   }
-
-  /// Dispose resources
   Future<void> dispose() async {
     await stop();
   }

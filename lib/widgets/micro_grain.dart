@@ -1,12 +1,10 @@
 import 'dart:math';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-
-/// Micro film grain overlay
-/// Opacity: 1-2%
-/// Prevents digital flatness - makes the screen feel alive without distraction.
 class MicroGrain extends StatefulWidget {
-  const MicroGrain({super.key});
+  final double stillness;
+
+  const MicroGrain({super.key, this.stillness = 0.0});
 
   @override
   State<MicroGrain> createState() => _MicroGrainState();
@@ -19,7 +17,6 @@ class _MicroGrainState extends State<MicroGrain>
   @override
   void initState() {
     super.initState();
-    // Very slow update - grain barely shifts
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 150),
@@ -38,7 +35,10 @@ class _MicroGrainState extends State<MicroGrain>
       animation: _controller,
       builder: (context, child) {
         return CustomPaint(
-          painter: _GrainPainter(seed: _controller.value),
+          painter: _GrainPainter(
+            seed: _controller.value,
+            stillness: widget.stillness,
+          ),
           size: Size.infinite,
         );
       },
@@ -48,30 +48,27 @@ class _MicroGrainState extends State<MicroGrain>
 
 class _GrainPainter extends CustomPainter {
   final double seed;
+  final double stillness;
   final Random _random;
 
-  _GrainPainter({required this.seed}) : _random = Random((seed * 10000).toInt());
+  _GrainPainter({required this.seed, required this.stillness})
+    : _random = Random((seed * 10000).toInt());
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.015) // 1.5% opacity
+      ..color = Colors.white.withValues(alpha: 0.003 + (1 - stillness) * 0.012)
       ..strokeWidth = 1;
-
-    // Sparse grain - not too dense
     final grainCount = (size.width * size.height / 800).toInt();
 
     for (int i = 0; i < grainCount; i++) {
       final x = _random.nextDouble() * size.width;
       final y = _random.nextDouble() * size.height;
-      canvas.drawPoints(
-        ui.PointMode.points,
-        [Offset(x, y)],
-        paint,
-      );
+      canvas.drawPoints(ui.PointMode.points, [Offset(x, y)], paint);
     }
   }
 
   @override
-  bool shouldRepaint(_GrainPainter oldDelegate) => true;
+  bool shouldRepaint(_GrainPainter oldDelegate) =>
+      oldDelegate.seed != seed || oldDelegate.stillness != stillness;
 }

@@ -1,207 +1,98 @@
-<p align="center">
-  <img src="assets/images/logo.png" alt="STILL" width="400"/>
-</p>
+<div align="center">
 
-<p align="center">
-  <em>A space with no demand.</em>
-</p>
+<img src="assets/images/banner.png" alt="STILL — a quiet ambient water scene" width="100%" />
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Flutter-3.10+-02569B?style=flat-square&logo=flutter" alt="Flutter"/>
-  <img src="https://img.shields.io/badge/Platform-Android%20%7C%20iOS-green?style=flat-square" alt="Platform"/>
-  <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="License"/>
-</p>
+# STILL
+
+### A small, interactive place to pause.
+
+Flutter app · Ambient water scene · No account or cloud service
+
+</div>
 
 ---
 
-## Philosophy
+STILL is an ambient landscape you can touch. Make ripples on the water, move the light, choose a scene mood, or set your phone down and watch the surface settle.
 
-**STILL** exists to remove input pressure.
+The app is intentionally focused: it has no feed, goals, reminders, or session history.
 
-Not to calm. Not to guide. Not to help.
+## ✦ What you can do
 
-Just: *"I am here, and nothing is required."*
+| Interaction | What happens |
+| --- | --- |
+| Touch or draw on the water | Expanding ripples follow your touch. |
+| Drag the light | Move the celestial light and its reflection. |
+| Choose a mood | Switch between Dusk, Midnight, Eclipse, Emerald, Aurora, and Dawn. |
+| Tilt your phone | Gently shift the light and horizon with accelerometer input. |
+| Stay still | After a short pause, the water’s movement eases toward rest. |
+| Enable sound | Hear a quiet loop matched to the selected mood. Sound is optional. |
+| Use the breath pacer | Follow a visual breathing guide with selectable rhythms. |
 
-If the user expects something to happen, the app has failed.
+Settings also include motion and haptics controls and a sleep timer. First launch offers a choice to keep sound off or enable it; that preference is remembered on the device.
 
----
+## ◌ The scene
 
-## ❌ What STILL Does NOT Have
+The landscape is painted in Flutter with `CustomPainter`. Gradients, layered shorelines, stars, reflected light, slow water swells, and touch ripples are drawn in code. The scene responds to touch and device movement, and settles visually when the phone is still. It does not rely on a full-screen background image or a separate game engine.
 
-| ❌ | Reason |
-|---|--------|
-| No goals | Nothing to achieve |
-| No actions | Nothing to do |
-| No text | After first launch |
-| No timers | No time pressure |
-| No stats | Nothing to track |
-| No progress | Nothing to complete |
-| No exit message | The app doesn't care if you leave |
+## 🚀 Run it locally
 
----
+### Requirements
 
-## ✨ What STILL Has
+- Flutter SDK and Dart SDK compatible with the constraints in `pubspec.yaml`
+- A connected device or emulator
 
-| Feature | Behavior |
-|---------|----------|
-| **Adaptive Colors** | 2% hue shift based on time of day |
-| **Color Breathing** | 5-minute imperceptible hue cycle |
-| **Depth Parallax** | Tilt device → layers shift 1-2% |
-| **Presence Glow** | Organic pulsing (not rhythmic) |
-| **Micro Grain** | 1.5% film grain preventing digital flatness |
-| **Whisper Events** | Random tone/flicker every 10-20 min |
-| **Ambient Tone** | Optional 30-60Hz drone (4% volume) |
-
----
-
-## 📱 Screenshots
-
-<p align="center">
-  <img src="assets/images/app_icon.png" alt="App Icon" width="200"/>
-</p>
-
-<p align="center">
-  <em>The app icon matches the in-app presence glow.</em>
-</p>
-
----
-
-## 🛠️ Tech Stack
-
-- **Flutter** 3.10+
-- **Dart** 3.x
-- **State Management**: Pure StatefulWidget
-- **Persistence**: SharedPreferences (first-launch only)
-- **Sensors**: Accelerometer for parallax
-- **Audio**: AudioPlayers for ambient tone
-
----
-
-## 📁 Project Structure
-
+```bash
+git clone <your-repository-url>
+cd still
+flutter pub get
+flutter run
 ```
+
+Audio is bundled in `assets/audio/`. Sound can be enabled during first launch or from the main screen.
+
+## 🧰 Built with
+
+- **Flutter** for the app and custom-painted scene
+- [`sensors_plus`](https://pub.dev/packages/sensors_plus) for accelerometer input
+- [`audioplayers`](https://pub.dev/packages/audioplayers) for optional ambient audio
+- [`shared_preferences`](https://pub.dev/packages/shared_preferences) for on-device preferences
+
+`lottie` and `cupertino_icons` are listed in `pubspec.yaml`, but are not currently used by the Dart source.
+
+## 🗂️ Project structure
+
+```text
 lib/
-├── main.dart                    # Entry + immersive mode
+├── main.dart
 ├── app/
-│   └── still_app.dart           # MaterialApp configuration
+│   └── still_app.dart
 ├── core/
-│   ├── app_colors.dart          # Adaptive color palette
-│   └── app_durations.dart       # Animation timings
+│   ├── app_colors.dart
+│   └── app_durations.dart
 ├── screens/
-│   ├── first_launch_screen.dart # One-time "STILL" intro
-│   └── still_screen.dart        # The empty space
+│   ├── first_launch_screen.dart
+│   └── still_screen.dart
 ├── services/
 │   ├── ambient_tone_service.dart
 │   └── whisper_event_service.dart
 └── widgets/
-    ├── subtle_gradient.dart     # Color breathing + parallax
-    ├── micro_grain.dart         # Film grain overlay
-    └── presence_glow.dart       # Organic glow
+    ├── ambient_water_scene.dart
+    ├── micro_grain.dart
+    ├── mode_dial.dart
+    ├── presence_glow.dart
+    └── subtle_gradient.dart
 ```
 
----
+## 🔒 Data and storage
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Flutter 3.10 or higher
-- Dart 3.x
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/still.git
-
-# Navigate to project
-cd still
-
-# Install dependencies
-flutter pub get
-
-# Run the app
-flutter run
-```
-
-### Optional: Audio Assets
-
-For the ambient tone and whisper events, add these files to `assets/audio/`:
-
-| File | Description |
-|------|-------------|
-| `ambient_tone.mp3` | 30-60Hz low drone (loops) |
-| `whisper_tone.mp3` | Single soft whisper (~1-2s) |
-
-The app works without these files — audio features silently fail if missing.
-
----
-
-## 🎨 Design Tokens
-
-### Colors
-
-| Token | Hex | Usage |
-|-------|-----|-------|
-| Background Base | `#0E0F12` | Primary background |
-| Depth Overlay | `#14151A` | Subtle layering |
-| Highlight | `#1B1C22` | Gradient edges |
-| Text Primary | `#FFFFFF` @ 90% | First-launch text |
-
-### Timings
-
-| Animation | Duration |
-|-----------|----------|
-| Gradient Drift | 60 seconds |
-| Color Breathing | 5 minutes |
-| Presence Glow | 18 seconds |
-| Whisper Events | 10-20 minutes (random) |
-
----
-
-## 🧪 Success Criteria
-
-STILL is successful if:
-
-- ✅ Users open it and don't know what to do
-- ✅ Users don't feel confused — just neutral
-- ✅ Users don't talk about features
-- ✅ Users forget time without being told
-
-If someone asks: *"What am I supposed to do?"*
-
-Answer: *"Nothing."*
-
----
+STILL has no backend, accounts, or cloud sync. `shared_preferences` stores app preferences on the device, including onboarding completion, sound, motion, haptics, selected mood, and breathing-pacer settings. There is no personal content or session history feature.
 
 ## 📄 License
 
-```
-MIT License
-
-Copyright (c) 2026
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
+No license has been selected for this repository yet. Until a license is added, the source and bundled assets are not granted open-source reuse rights. If you want others to use, modify, and redistribute this project under the MIT License, add a `LICENSE` file containing the MIT License text and your copyright holder and year.
 
 ---
 
-<p align="center">
-  <em>Nothing is required.</em>
-</p>
+<div align="center">
+Made with Flutter · Designed for a quieter moment
+</div>

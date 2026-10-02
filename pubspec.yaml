@@ -1,5 +1,5 @@
 name: still
-description: "A new Flutter project."
+description: "An interactive ambient water scene that settles with your phone."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -62,9 +62,9 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/images/app_icon.png"
+  image_path: "assets/images/icon.png"
   adaptive_icon_background: "#0E0F12"
-  adaptive_icon_foreground: "assets/images/app_icon.png"
+  adaptive_icon_foreground: "assets/images/icon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -81,6 +81,7 @@ flutter:
   assets:
     - assets/audio/
     - assets/images/
+    - assets/images/modes/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
